@@ -1,7 +1,7 @@
 import { Temporal } from 'temporal-polyfill';
 import qrcode from 'qrcode-generator';
 
-const DEFAULT_OPTIONS = {
+export const DEFAULT_OPTIONS = {
   size: 256,
   backgroundColor: '#FEF9E7',
   gradientColors: ['#FFB7B2', '#FFDAC1', '#E2F0CB', '#B5EAD7', '#C7CEEA'],
@@ -10,7 +10,12 @@ const DEFAULT_OPTIONS = {
   crossfadeDuration: 300
 };
 
-function resolveContainer(container) {
+export function formatTime() {
+  const now = Temporal.Now.plainTimeISO();
+  return now.toString({ smallestUnit: 'seconds' });
+}
+
+export function resolveContainer(container) {
   if (typeof container === 'string') {
     const el = document.querySelector(container);
     if (!el) throw new Error(`qr-code-clock: container "${container}" not found`);
@@ -38,7 +43,7 @@ function createGradient(ctx, size, colors) {
   return gradient;
 }
 
-function renderQrToCanvas(canvas, text, options) {
+export function renderQrToCanvas(canvas, text, options) {
   const { size, padding, gradientColors } = options;
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
@@ -108,13 +113,8 @@ export function renderQrClock(container, userOptions = {}) {
   let currentIndex = 0;
   let intervalId = null;
 
-  function getTimeString() {
-    const now = Temporal.Now.plainTimeISO();
-    return now.toString({ smallestUnit: 'seconds' });
-  }
-
   function tick() {
-    const text = getTimeString();
+    const text = formatTime();
     const nextIndex = currentIndex ^ 1;
     renderQrToCanvas(canvases[nextIndex], text, options);
     canvases[currentIndex].style.opacity = '0';
