@@ -3,7 +3,7 @@ import {
   formatTime,
   resolveContainer,
   renderQrToCanvas,
-  renderQrClock,
+  renderQrCodeClock,
   DEFAULT_OPTIONS
 } from '../src/index.js';
 
@@ -103,7 +103,7 @@ function createMockContext() {
   };
 }
 
-describe('renderQrClock', () => {
+describe('renderQrCodeClock', () => {
   let app;
   let originalGetContext;
 
@@ -127,18 +127,18 @@ describe('renderQrClock', () => {
   });
 
   it('creates two canvases inside the container', () => {
-    renderQrClock('#app');
+    renderQrCodeClock('#app');
     const canvases = app.querySelectorAll('canvas');
     expect(canvases.length).toBe(2);
   });
 
   it('applies color background by default', () => {
-    renderQrClock('#app');
+    renderQrCodeClock('#app');
     expect(app.style.background).toContain('linear-gradient');
   });
 
   it('sets one canvas visible and the other hidden', () => {
-    renderQrClock('#app');
+    renderQrCodeClock('#app');
     const canvases = app.querySelectorAll('canvas');
     const opacities = Array.from(canvases).map(c => c.style.opacity);
     expect(opacities).toContain('1');
@@ -146,20 +146,20 @@ describe('renderQrClock', () => {
   });
 
   it('creates a toggle switch by default', () => {
-    renderQrClock('#app');
+    renderQrCodeClock('#app');
     const toggle = app.querySelector('input[type="checkbox"]');
     expect(toggle).not.toBeNull();
     expect(toggle.checked).toBe(true);
   });
 
   it('does not create a toggle when showToggle is false', () => {
-    renderQrClock('#app', { showToggle: false });
+    renderQrCodeClock('#app', { showToggle: false });
     const toggle = app.querySelector('input[type="checkbox"]');
     expect(toggle).toBeNull();
   });
 
   it('changes background when toggle is unchecked', () => {
-    renderQrClock('#app', { backgroundColor: '#123456' });
+    renderQrCodeClock('#app', { backgroundColor: '#123456' });
     const toggle = app.querySelector('input[type="checkbox"]');
     expect(toggle.checked).toBe(true);
     toggle.checked = false;
@@ -168,7 +168,7 @@ describe('renderQrClock', () => {
   });
 
   it('destroy removes canvases, toggle and wrapper', () => {
-    const clock = renderQrClock('#app');
+    const clock = renderQrCodeClock('#app');
     expect(app.querySelectorAll('canvas').length).toBe(2);
     expect(app.querySelector('input[type="checkbox"]')).not.toBeNull();
     clock.destroy();

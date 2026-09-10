@@ -142,7 +142,7 @@ function createToggle(isColorMode, onChange) {
   return label;
 }
 
-export function renderQrClock(container, userOptions = {}) {
+export function renderQrCodeClock(container, userOptions = {}) {
   const options = { ...DEFAULT_OPTIONS, ...userOptions };
   const root = resolveContainer(container);
   let isColorMode = true;
