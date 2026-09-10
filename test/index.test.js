@@ -18,10 +18,12 @@ describe('DEFAULT_OPTIONS', () => {
   it('has expected defaults', () => {
     expect(DEFAULT_OPTIONS.size).toBe(256);
     expect(DEFAULT_OPTIONS.backgroundColor).toBe('#FEF9E7');
+    expect(DEFAULT_OPTIONS.colorBackground).toContain('linear-gradient');
     expect(DEFAULT_OPTIONS.gradientColors).toHaveLength(5);
     expect(DEFAULT_OPTIONS.updateInterval).toBe(1000);
     expect(DEFAULT_OPTIONS.padding).toBe(4);
     expect(DEFAULT_OPTIONS.crossfadeDuration).toBe(300);
+    expect(DEFAULT_OPTIONS.showToggle).toBe(true);
   });
 });
 
@@ -130,9 +132,9 @@ describe('renderQrClock', () => {
     expect(canvases.length).toBe(2);
   });
 
-  it('applies background color to the container', () => {
-    renderQrClock('#app', { backgroundColor: '#123456' });
-    expect(app.style.backgroundColor).toBe('rgb(18, 52, 86)');
+  it('applies color background by default', () => {
+    renderQrClock('#app');
+    expect(app.style.background).toContain('linear-gradient');
   });
 
   it('sets one canvas visible and the other hidden', () => {
@@ -143,10 +145,35 @@ describe('renderQrClock', () => {
     expect(opacities).toContain('0');
   });
 
-  it('destroy removes canvases and clears interval', () => {
+  it('creates a toggle switch by default', () => {
+    renderQrClock('#app');
+    const toggle = app.querySelector('input[type="checkbox"]');
+    expect(toggle).not.toBeNull();
+    expect(toggle.checked).toBe(true);
+  });
+
+  it('does not create a toggle when showToggle is false', () => {
+    renderQrClock('#app', { showToggle: false });
+    const toggle = app.querySelector('input[type="checkbox"]');
+    expect(toggle).toBeNull();
+  });
+
+  it('changes background when toggle is unchecked', () => {
+    renderQrClock('#app', { backgroundColor: '#123456' });
+    const toggle = app.querySelector('input[type="checkbox"]');
+    expect(toggle.checked).toBe(true);
+    toggle.checked = false;
+    toggle.dispatchEvent(new Event('change'));
+    expect(app.style.background).toBe('rgb(18, 52, 86)');
+  });
+
+  it('destroy removes canvases, toggle and wrapper', () => {
     const clock = renderQrClock('#app');
     expect(app.querySelectorAll('canvas').length).toBe(2);
+    expect(app.querySelector('input[type="checkbox"]')).not.toBeNull();
     clock.destroy();
     expect(app.querySelectorAll('canvas').length).toBe(0);
+    expect(app.querySelector('input[type="checkbox"]')).toBeNull();
+    expect(app.children.length).toBe(0);
   });
 });
